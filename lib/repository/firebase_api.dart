@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:test_app_3/models/item.dart';
 
 class FirebaseApi {
+
   Future<String?> signUp(String email, String password) async {
     try {
       final credenciales = await FirebaseAuth.instance
@@ -16,7 +18,19 @@ class FirebaseApi {
     }
   }
 
-  //Future<Object?> signIn(String email, String password) async {}
+  Future<Object?> signIn(String email, String password) async {
+    try {
+      final credenciales = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      return credenciales.user?.uid;
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseException: ${e.code}');
+      throw e.code;
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.code}');
+      throw e.code;
+    }
+  }
 
   Future<void> recoveryPassword(String email) async {
     try {

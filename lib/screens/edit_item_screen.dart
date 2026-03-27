@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_app_3/utils/firebase_errors.dart';
 import 'package:test_app_3/utils/messenger_utils.dart';
 
 class EditItemScreen extends StatefulWidget {
@@ -295,16 +296,15 @@ class _EditItemScreenState extends State<EditItemScreen> {
     String unit = _selectedUnit;
 
     try {
-      map<String, dynamic> data = {
+      Map<String, dynamic> data = {
         'name': name,
-        'quantity': '$quantity ${unit == 'unidades' ? 'UD' : unit.substring(0,2)},
+        'quantity':
+            '$quantity ${unit == 'unidades' ? 'UD' : unit.substring(0, 2)}',
         'description': description,
         'priority': priority,
         'image': widget.item['image'],
         'isCompleted': widget.item['isCompleted'],
       };
-
-      
     } catch (e) {
       if (mounted) {
         MessengerUtils.showMsg(

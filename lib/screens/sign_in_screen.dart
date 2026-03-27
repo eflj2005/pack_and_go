@@ -12,6 +12,9 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   bool _obscureText = true;
+  final _emailTextEditingController = TextEditingController();
+  final _passwordTextEditingController = TextEditingController();
+  final _firebaseApi = FirebaseApi();
 
   @override
   Widget build(BuildContext context) {
@@ -66,10 +69,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     const Text(
                       'Gestiona tus envíos de forma rápida y sencilla',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.blueGrey,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.blueGrey),
                     ),
                     const SizedBox(height: 32),
                     // Email Field
@@ -85,19 +85,27 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 8),
                     TextField(
+                      controller: _emailTextEditingController,
                       decoration: InputDecoration(
                         hintText: 'nombre@ejemplo.com',
                         hintStyle: const TextStyle(color: Colors.grey),
                         filled: true,
                         fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 16,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
-                          borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFE0E0E0),
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
-                          borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFE0E0E0),
+                          ),
                         ),
                       ),
                     ),
@@ -117,7 +125,10 @@ class _SignInScreenState extends State<SignInScreen> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const RecoveryPasswordScreen()),
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const RecoveryPasswordScreen(),
+                              ),
                             );
                           },
                           child: const Text(
@@ -133,6 +144,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 8),
                     TextField(
+                      controller: _passwordTextEditingController,
                       obscureText: _obscureText,
                       decoration: InputDecoration(
                         hintText: 'Tu contraseña secreta',
@@ -141,7 +153,9 @@ class _SignInScreenState extends State<SignInScreen> {
                         fillColor: Colors.white,
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                            _obscureText
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
                             color: Colors.blueGrey,
                           ),
                           onPressed: () {
@@ -150,14 +164,21 @@ class _SignInScreenState extends State<SignInScreen> {
                             });
                           },
                         ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 16,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
-                          borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFE0E0E0),
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
-                          borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFE0E0E0),
+                          ),
                         ),
                       ),
                     ),
@@ -166,7 +187,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _signIn();
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFF27121),
                           foregroundColor: Colors.white,
@@ -178,7 +201,10 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                         child: const Text(
                           'Iniciar Sesión',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -189,7 +215,10 @@ class _SignInScreenState extends State<SignInScreen> {
                         Expanded(child: Divider()),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text('o', style: TextStyle(color: Colors.blueGrey)),
+                          child: Text(
+                            'o',
+                            style: TextStyle(color: Colors.blueGrey),
+                          ),
                         ),
                         Expanded(child: Divider()),
                       ],
@@ -200,10 +229,17 @@ class _SignInScreenState extends State<SignInScreen> {
                       width: double.infinity,
                       child: OutlinedButton.icon(
                         onPressed: () {},
-                        icon: const Icon(Icons.g_mobiledata, size: 30, color: Colors.blue), // Simplified for brevity
+                        icon: const Icon(
+                          Icons.g_mobiledata,
+                          size: 30,
+                          color: Colors.blue,
+                        ), // Simplified for brevity
                         label: const Text(
                           'Continuar con Google',
-                          style: TextStyle(color: Color(0xFF1A1C29), fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: Color(0xFF1A1C29),
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -224,7 +260,9 @@ class _SignInScreenState extends State<SignInScreen> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                              MaterialPageRoute(
+                                builder: (context) => const SignUpScreen(),
+                              ),
                             );
                           },
                           child: const Text(
@@ -268,18 +306,19 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  Future<void> signIn() async{
+  Future<void> _signIn() async {
     String email = _emailTextEditingController.text.trim();
     String password = _passwordTextEditingController.text.trim();
     try {
       final result = await FirebaseApi().signIn(email, password);
-      if(result != null){ 
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-      }
-
-
+      // if (result != null) {
+      //   Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => const HomeScreen()),
+      //   );
+      // }
+    } catch (e) {
+      print("Error ${e.toString()}");
     }
-
-
   }
 }
