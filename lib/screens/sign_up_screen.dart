@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_app_3/repository/firebase_api.dart';
+import 'package:test_app_3/utils/firebase_errors.dart';
+import 'package:test_app_3/utils/messenger_utils.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -362,13 +364,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     // if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
     try {
       final respuesta = await _firebaseApi.signUp(email, password);
-      Navigator.pop(context); //vuelve a singin
+      if (respuesta != null) {
+        Navigator.pop(context); //vuelve a singin
+      }
     } catch (e) {
-      // MessengerUtils.showMsg(
-      //   context,
-      //   FirebaseErrors().mapMessage(e.toString()),
-      // );
-      print("Error ${e.toString()}");
+      MessengerUtils.showMsg(context, FirebaseErrors.mapMessage(e.toString()));
     }
   }
 }

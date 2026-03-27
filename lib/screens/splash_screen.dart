@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:test_app_3/repository/firebase_api.dart';
 import 'package:test_app_3/screens/home_screen.dart';
 import 'sign_in_screen.dart';
 
@@ -11,11 +12,13 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final FirebaseApi _firebaseApi = FirebaseApi();
+
   @override
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 3), () async {
-      var result = await _firebaseApi.ValidateSession();
+      var result = await _firebaseApi.validateSession();
       if (result) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const SignInScreen()),

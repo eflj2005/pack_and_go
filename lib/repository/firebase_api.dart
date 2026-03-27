@@ -1,9 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:test_app_3/models/item.dart';
 
 class FirebaseApi {
-
   Future<String?> signUp(String email, String password) async {
     try {
       final credenciales = await FirebaseAuth.instance
@@ -52,6 +51,10 @@ class FirebaseApi {
     await FirebaseAuth.instance.signOut();
   }
 
+  Future<bool> validateSession() async {
+    return await FirebaseAuth.instance.currentUser == null;
+  }
+
   Future<void> createItem(Item item) async {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -92,7 +95,6 @@ class FirebaseApi {
           .collection('items')
           .doc(itemId)
           .update(data);
-    });
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.code}');
       throw e.code;

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:test_app_3/repository/firebase_api.dart';
+import 'package:test_app_3/screens/home_screen.dart';
+import 'package:test_app_3/utils/firebase_errors.dart';
+import 'package:test_app_3/utils/messenger_utils.dart';
 import 'sign_up_screen.dart';
 import 'recovery_password_screen.dart';
 
@@ -311,15 +314,14 @@ class _SignInScreenState extends State<SignInScreen> {
     String password = _passwordTextEditingController.text.trim();
     try {
       final result = await FirebaseApi().signIn(email, password);
-      // if (result != null) {
-      //   Navigator.pushReplacement(
-      //     context,
-      //     MaterialPageRoute(builder: (context) => const HomeScreen()),
-      //   );
-      // }
-      print("Ingrese");
+      if (result != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
     } catch (e) {
-      print("Error ${e.toString()}");
+      MessengerUtils.showMsg(context, FirebaseErrors.mapMessage(e.toString()));
     }
   }
 }

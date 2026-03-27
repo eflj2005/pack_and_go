@@ -166,7 +166,7 @@ class _RecoveryPasswordScreenState extends State<RecoveryPasswordScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            recoveryPassword();
+                            _recoveryPassword();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFF27121),
@@ -223,7 +223,7 @@ class _RecoveryPasswordScreenState extends State<RecoveryPasswordScreen> {
     );
   }
 
-  Future<void> recoveryPassword() async {
+  Future<void> _recoveryPassword() async {
     String email = _emailController.text.trim();
     try {
       await _firebaseApi.recoveryPassword(email);
