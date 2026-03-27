@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "504734441226",
+    "project_id": "packandgo-c47fd",
+    "storage_bucket": "packandgo-c47fd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:504734441226:android:ea3c92b0f9ab2aa1b0e4f3",
+        "android_client_info": {
+          "package_name": "com.edwinacubillos.test_app_3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "504734441226-9lhu7l1d8tqruvm3sviqjdbd48apa8uj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDm1yioCwLDLWrjHyaZf0Wp5FPXmJnzcyY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "504734441226-9lhu7l1d8tqruvm3sviqjdbd48apa8uj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
