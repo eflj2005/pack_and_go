@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:test_app_3/models/item.dart';
 
 class FirebaseApi {
@@ -55,15 +58,32 @@ class FirebaseApi {
     return await FirebaseAuth.instance.currentUser == null;
   }
 
-  Future<void> createItem(Item item) async {
+  Future<void> createItem(Item item, File? imageFile) async {
     try {
+      final storage = FirebaseStorage.instance;
       final uid = FirebaseAuth.instance.currentUser?.uid;
-      final document = await FirebaseFirestore.instance
+      final document = FirebaseFirestore.instance
           .collection('users')
           .doc(uid)
           .collection('items')
           .doc();
       item.id = document.id;
+
+      Reference referencia = storage
+          .ref()
+          .child('users')
+          .child(uid!)
+          .child('item_pictures')
+          .child('${item.id}.jpg');
+
+      SettableMetadata metadata = SettableMetadata(contentType: 'image/jpeg');
+      UploadTask uploadTask = referencia.putFile(imageFile!, metadata);
+
+      TaskSnapshot snapshot = await uploadTask;
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+
+      item.image = downloadUrl;
+
       await document.set(item.toJson());
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.code}');
@@ -80,13 +100,68 @@ class FirebaseApi {
           .collection('items')
           .doc(itemId)
           .delete();
+
+      await FirebaseStorage.instance
+          .ref()
+          .child('users')
+          .child(uid!)
+          .child('item_pictures')
+          .child('$itemId.jpg')
+          .delete();
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.code}');
       throw e.code;
     }
   }
 
-  Future<void> updateItem(String itemId, Map<String, dynamic> data) async {
+  Future<void> updateItem(
+    String itemId,
+    Map<String, dynamic> data,
+    File? imageFile,
+  ) async {
+    try {
+      final storage = FirebaseStorage.instance;
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+
+      if (imageFile != null) {
+        Reference referencia = storage
+            .ref()
+            .child('users')
+            .child(uid!)
+            .child('item_pictures')
+            .child('$itemId.jpg');
+
+        SettableMetadata metadata = SettableMetadata(contentType: 'image/jpeg');
+        UploadTask uploadTask = referencia.putFile(imageFile, metadata);
+
+        TaskSnapshot snapshot = await uploadTask;
+        String downloadUrl = await snapshot.ref.getDownloadURL();
+
+        data['image'] = downloadUrl;
+      } else {
+        await FirebaseStorage.instance
+            .ref()
+            .child('users')
+            .child(uid!)
+            .child('item_pictures')
+            .child('$itemId.jpg')
+            .delete();
+        data['image'] = '';
+      }
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('items')
+          .doc(itemId)
+          .update(data);
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.code}');
+      throw e.code;
+    }
+  }
+
+  Future<void> updateItemCompletion(String itemId, bool isCompleted) async {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
       await FirebaseFirestore.instance
@@ -94,7 +169,19 @@ class FirebaseApi {
           .doc(uid)
           .collection('items')
           .doc(itemId)
-          .update(data);
+          .update({'isCompleted': isCompleted});
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.code}');
+      throw e.code;
+    }
+  }
+
+  Future<void> createUser(User? user) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .set(user.toJson());
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.code}');
       throw e.code;

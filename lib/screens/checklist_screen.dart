@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:test_app_3/repository/firebase_api.dart';
 import 'package:test_app_3/screens/edit_item_screen.dart';
 import 'package:test_app_3/utils/firebase_errors.dart';
 import 'package:test_app_3/utils/messenger_utils.dart';
@@ -16,8 +18,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
 
   final _firebaseApi = FirebaseApi();
 
-
-  final List<Map<String, dynamic>> _mockItems = [
+  // final List<Map<String, dynamic>> _mockItems = [
     {
       'id': '1',
       'name': 'Cámara DSLR',
@@ -60,16 +61,91 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
     },
   ];
 
+  void _updateItemCompletion(String id, bool isCompleted) async {
+    try {
+      await _firebaseApi.updateItemCompletion(id, isCompleted);
+    } catch (e) {
+      MessengerUtils.showMsg(context, FirebaseErrors.mapMessage(e.toString()));
+    }
+  }
+
+  Widget _buildDialogButton({
+    required String label,
+    IconData? icon,
+    required Color backgroundColor,
+    required Color textColor,
+    required VoidCallback onTap,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: onTap,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: backgroundColor,
+          foregroundColor: textColor,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 20),
+              const SizedBox(width: 10),
+            ],
+            Text(
+              label,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color _getPriorityColor(String priority, bool isCompleted) {
+    if (isCompleted) return Colors.grey;
+    switch (priority) {
+      case 'ALTA':
+        return Colors.redAccent;
+      case 'MEDIA':
+        return Colors.orange;
+      case 'BAJA':
+        return Colors.green;
+      default:
+        return Colors.blueGrey;
+    }
+  }
+
+  Future<void> _deleteItem(String itemId) async {
+    try {
+      await _firebaseApi.deleteItem(itemId);
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        MessengerUtils.showMsg(
+          context,
+          FirebaseErrors.mapMessage(e.toString()),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFireStore.instance
+      stream: FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection('items')
           .snapshots(), // Aquí conectarás tu Stream de Firebase o Base de Datos
       builder: (context, snapshot) {
-        if (snapshot.hasData || snapshot.data!.docs.isEmpty) {
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const Text('No hay items en lista');
         }
 
@@ -77,7 +153,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
 
         return ListView.builder(
           padding: const EdgeInsets.all(16),
-          itemCount: items.length,
+          itemCount: snapshot.data?.docs.length,
           itemBuilder: (context, index) {
             final item = snapshot.data?.docs[index];
             return _buildItemCard(item);
@@ -88,7 +164,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
   }
 
   Widget _buildItemCard(QueryDocumentSnapshot<Object?>? item) {
-    bool isCompleted = item['isCompleted'];
+    bool isCompleted = item!['isCompleted'];
 
     return GestureDetector(
       onLongPress: () => _showItemOptionsDialog(item),
@@ -113,17 +189,23 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Imagen del ítem
-                // ClipRRect(
-                //   borderRadius: BorderRadius.circular(16),
-                //   child: Image.network(
-                //     item['image'],
-                //     width: 80,
-                //     height: 80,
-                //     fit: BoxFit.cover,
-                //     color: isCompleted ? Colors.grey : null,
-                //     colorBlendMode: isCompleted ? BlendMode.saturation : null,
-                //   ),
-                // ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Ink.image(
+                    image: (item['image'].isEmpty || item['image'] == null)
+                        ? const AssetImage('assets/images/logo.png')
+                        : NetworkImage(item['image']),
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                    colorFilter: isCompleted
+                        ? const ColorFilter.mode(
+                            Colors.grey,
+                            BlendMode.saturation,
+                          )
+                        : null,
+                  ),
+                ),
                 const SizedBox(width: 16),
                 // Detalles del ítem
                 Expanded(
@@ -192,7 +274,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      // item['isCompleted'] = !item['isCompleted'];
+                      _updateItemCompletion(item.id, !isCompleted);
                     });
                   },
                   child: Container(
@@ -287,15 +369,15 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                 ),
                 const SizedBox(height: 12),
 
-                // Botón Eliminar
+                // Botón Confirmar Eliminar
                 _buildDialogButton(
                   label: 'Eliminar',
                   icon: Icons.delete_outline,
                   backgroundColor: const Color(0xFFFFF0F0),
                   textColor: Colors.red,
                   onTap: () {
-                    Navigator.pop(context);
-                    _showDeleteConfirmationDialog(item);
+                    _deleteItem(item.id);
+                    //Navigator.pop(context);
                   },
                 ),
                 const SizedBox(height: 12),
@@ -315,7 +397,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
     );
   }
 
-  void _showDeleteConfirmationDialog(QueryDocumentSnapshot<Object?> item) {
+ void _showDeleteConfirmationDialog(QueryDocumentSnapshot<Object?> item) { 
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -409,65 +491,4 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
     );
   }
 
-  Widget _buildDialogButton({
-    required String label,
-    IconData? icon,
-    required Color backgroundColor,
-    required Color textColor,
-    required VoidCallback onTap,
-  }) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
-          foregroundColor: textColor,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (icon != null) ...[
-              Icon(icon, size: 20),
-              const SizedBox(width: 10),
-            ],
-            Text(
-              label,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Color _getPriorityColor(String priority, bool isCompleted) {
-    if (isCompleted) return Colors.grey;
-    switch (priority) {
-      case 'ALTA':
-        return Colors.redAccent;
-      case 'MEDIA':
-        return Colors.orange;
-      case 'BAJA':
-        return Colors.green;
-      default:
-        return Colors.blueGrey;
-    }
-  }
-  
-  void deleteItem(String itemId) {
-    try {
-      await _firebaseApi.deleteItem(itemId);
-    } catch (e) {
-      if(mounted) {
-        MessengerUtils.showMsg(context, FirebaseErrors.mapMessage(e.toString()));
-      }
-    }
-
-  }
 }

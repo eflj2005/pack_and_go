@@ -1,9 +1,15 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:test_app_3/repository/firebase_api.dart';
 import 'package:test_app_3/utils/firebase_errors.dart';
 import 'package:test_app_3/utils/messenger_utils.dart';
 
 class EditItemScreen extends StatefulWidget {
-  final Map<String, dynamic> item;
+  final QueryDocumentSnapshot<Object?> item;
 
   const EditItemScreen({super.key, required this.item});
 
@@ -18,6 +24,12 @@ class _EditItemScreenState extends State<EditItemScreen> {
   late String _selectedUnit;
   late String _selectedPriority;
 
+  final _firebaseApi = FirebaseApi();
+
+  String? _currentImageUrl;
+  File? _imageFile;
+  final ImagePicker _imagePicker = ImagePicker();
+
   final List<String> _units = [
     'unidades',
     'pares',
@@ -31,6 +43,8 @@ class _EditItemScreenState extends State<EditItemScreen> {
   @override
   void initState() {
     super.initState();
+    _currentImageUrl = widget.item['image'];
+
     _nameController = TextEditingController(text: widget.item['name']);
     // Extraemos el número de la cantidad (ej: "1 UD" -> "1")
     String quantityText = widget.item['quantity'].toString().split(' ')[0];
@@ -93,37 +107,44 @@ class _EditItemScreenState extends State<EditItemScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            Stack(
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    image: DecorationImage(
-                      image: NetworkImage(widget.item['image']),
-                      fit: BoxFit.cover,
-                    ),
+            (_currentImageUrl == null || _currentImageUrl!.isEmpty)
+                ? _buildImageSelector()
+                : Stack(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          image: DecorationImage(
+                            image: NetworkImage(widget.item['image']),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 12,
+                        right: 12,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.delete_outline,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _currentImageUrl = '';
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Positioned(
-                  top: 12,
-                  right: 12,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.delete_outline, color: Colors.red),
-                      onPressed: () {
-                        // Lógica para eliminar foto
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 24),
 
             _buildLabel('Nombre del ítem'),
@@ -179,8 +200,8 @@ class _EditItemScreenState extends State<EditItemScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  updateItem();
                   // Lógica para guardar cambios
+                  _updateItem();
                   // Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
@@ -288,7 +309,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
     );
   }
 
-  void updateItem() {
+  Future<void> _updateItem() async {
     String name = _nameController.text.trim();
     String quantity = _quantityController.text.trim();
     String description = _descriptionController.text.trim();
@@ -299,12 +320,15 @@ class _EditItemScreenState extends State<EditItemScreen> {
       Map<String, dynamic> data = {
         'name': name,
         'quantity':
-            '$quantity ${unit == 'unidades' ? 'UD' : unit.substring(0, 2)}',
-        'description': description,
+            '$quantity ${unit == 'unidades' ? 'UD' : unit.substring(0, 2).toUpperCase()}',
+        'unit': unit,
         'priority': priority,
+        'description': description,
         'image': widget.item['image'],
         'isCompleted': widget.item['isCompleted'],
       };
+
+      await _firebaseApi.updateItem(widget.item.id, data);
     } catch (e) {
       if (mounted) {
         MessengerUtils.showMsg(
@@ -313,5 +337,126 @@ class _EditItemScreenState extends State<EditItemScreen> {
         );
       }
     }
+  }
+
+  Future<void> _takePhoto(ImageSource camera) async {
+    try {
+      final XFile? photo = await _imagePicker.pickImage(
+        source: camera,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85, //0-100
+      );
+
+      if (photo == null) return;
+
+      setState(() {
+        _imageFile = File(photo.path);
+      });
+    } on PlatformException catch (e) {
+      MessengerUtils.showMsg(context, 'Error al tomar la foto: $e');
+    } catch (e) {
+      MessengerUtils.showMsg(context, 'Error al tomar la foto: $e');
+    }
+  }
+
+  Widget _buildImageSelector() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _buildImagePickerCard(
+                icon: Icons.camera_alt_outlined,
+                label: 'Tomar Foto',
+                onTap: () {
+                  _takePhoto(ImageSource.camera);
+                },
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildImagePickerCard(
+                icon: Icons.image_outlined,
+                label: 'Galería',
+                onTap: () {
+                  _takePhoto(ImageSource.gallery);
+                },
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        // Placeholder for selected image
+        Container(
+          width: double.infinity,
+          height: 150,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8F9FA),
+            borderRadius: BorderRadius.circular(20),
+            image: _imageFile != null
+                ? DecorationImage(
+                    image: FileImage(_imageFile!),
+                    fit: BoxFit.cover,
+                  )
+                : const DecorationImage(
+                    image: NetworkImage(
+                      'https://via.placeholder.com/400x150?text=Sin+imagen+seleccionada',
+                    ),
+                    fit: BoxFit.cover,
+                    opacity: 0.5,
+                  ),
+          ),
+          child: _imageFile == null
+              ? const Center(
+                  child: Text(
+                    'Sin imagen seleccionada',
+                    style: TextStyle(color: Colors.blueGrey),
+                  ),
+                )
+              : null,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImagePickerCard({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: const Color(0xFFE0E0E0),
+            style: BorderStyle.solid,
+          ),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF5F0),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: const Color(0xFFF27121), size: 30),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.blueGrey,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

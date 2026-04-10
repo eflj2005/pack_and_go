@@ -43,7 +43,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ],
                           image: const DecorationImage(
-                            image: NetworkImage('https://img.freepik.com/vector-premium/avatar-perfil-hombre-estilo-dibujos-animados-vector-premium_202271-4628.jpg'),
+                            image: NetworkImage(
+                              'https://img.freepik.com/vector-premium/avatar-perfil-hombre-estilo-dibujos-animados-vector-premium_202271-4628.jpg',
+                            ),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -57,7 +59,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             color: Color(0xFFF27121),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.edit, color: Colors.white, size: 18),
+                          child: const Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                         ),
                       ),
                     ],
@@ -65,11 +71,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 16),
                   const Text(
                     'John Doe',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF1A1C29)),
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A1C29),
+                    ),
                   ),
                   Text(
                     _firebaseApi.currentUserEmail,
-                    style: const TextStyle(fontSize: 14, color: Colors.blueGrey),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.blueGrey,
+                    ),
                   ),
                 ],
               ),
@@ -81,9 +94,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildInfoCard([
               _buildInfoTile(Icons.person_outline, 'Nombre', 'John Doe'),
               _buildDivider(),
-              _buildInfoTile(Icons.phone_outlined, 'Teléfono', '+34 600 000 000'),
+              _buildInfoTile(
+                Icons.phone_outlined,
+                'Teléfono',
+                '+34 600 000 000',
+              ),
               _buildDivider(),
-              _buildInfoTile(Icons.cake_outlined, 'Fecha de Nacimiento', '05/15/1990'),
+              _buildInfoTile(
+                Icons.cake_outlined,
+                'Fecha de Nacimiento',
+                '05/15/1990',
+              ),
             ]),
 
             const SizedBox(height: 24),
@@ -91,13 +112,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // Notifications Section
             _buildSectionHeader('NOTIFICACIONES'),
             _buildInfoCard([
-              _buildSwitchTile(Icons.notifications_none, 'Alertas de Viaje', _travelAlerts, (val) {
-                setState(() => _travelAlerts = val);
-              }),
+              _buildSwitchTile(
+                Icons.notifications_none,
+                'Alertas de Viaje',
+                _travelAlerts,
+                (val) {
+                  setState(() => _travelAlerts = val);
+                },
+              ),
               _buildDivider(),
-              _buildSwitchTile(Icons.timer_outlined, 'Recordatorios', _reminders, (val) {
-                setState(() => _reminders = val);
-              }),
+              _buildSwitchTile(
+                Icons.timer_outlined,
+                'Recordatorios',
+                _reminders,
+                (val) {
+                  setState(() => _reminders = val);
+                },
+              ),
             ]),
 
             const SizedBox(height: 24),
@@ -105,12 +136,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // Security Section
             _buildSectionHeader('SEGURIDAD'),
             _buildInfoCard([
-              _buildInfoTile(Icons.lock_outline, 'Cambiar Contraseña', '', isChevronOnly: true, onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
-                );
-              }),
+              _buildInfoTile(
+                Icons.lock_outline,
+                'Cambiar Contraseña',
+                '',
+                isChevronOnly: true,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ChangePasswordScreen(),
+                    ),
+                  );
+                },
+              ),
             ]),
             const SizedBox(height: 40),
           ],
@@ -127,21 +166,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.blueGrey, letterSpacing: 1),
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueGrey,
+              letterSpacing: 1,
+            ),
           ),
           if (showEdit)
             TextButton.icon(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const EditProfileScreen(),
+                  ),
                 );
               },
               icon: const Icon(Icons.edit, size: 14, color: Color(0xFFF27121)),
-              label: const Text('EDITAR', style: TextStyle(color: Color(0xFFF27121), fontSize: 12, fontWeight: FontWeight.bold)),
+              label: const Text(
+                'EDITAR',
+                style: TextStyle(
+                  color: Color(0xFFF27121),
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               style: TextButton.styleFrom(
                 backgroundColor: const Color(0xFFFFF5F0),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 padding: const EdgeInsets.symmetric(horizontal: 12),
               ),
             ),
@@ -168,7 +223,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildInfoTile(IconData icon, String title, String value, {bool isChevronOnly = false, VoidCallback? onTap}) {
+  Widget _buildInfoTile(
+    IconData icon,
+    String title,
+    String value, {
+    bool isChevronOnly = false,
+    VoidCallback? onTap,
+  }) {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
@@ -178,14 +239,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         child: Icon(icon, color: const Color(0xFFF27121), size: 20),
       ),
-      title: isChevronOnly ? Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1A1C29))) : Text(title, style: const TextStyle(fontSize: 12, color: Colors.blueGrey)),
-      subtitle: isChevronOnly ? null : Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF1A1C29))),
-      trailing: const Icon(Icons.chevron_right, color: Colors.blueGrey, size: 20),
+      title: isChevronOnly
+          ? Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1A1C29),
+              ),
+            )
+          : Text(
+              title,
+              style: const TextStyle(fontSize: 12, color: Colors.blueGrey),
+            ),
+      subtitle: isChevronOnly
+          ? null
+          : Text(
+              value,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1A1C29),
+              ),
+            ),
+      trailing: const Icon(
+        Icons.chevron_right,
+        color: Colors.blueGrey,
+        size: 20,
+      ),
       onTap: onTap,
     );
   }
 
-  Widget _buildSwitchTile(IconData icon, String title, bool value, Function(bool) onChanged) {
+  Widget _buildSwitchTile(
+    IconData icon,
+    String title,
+    bool value,
+    Function(bool) onChanged,
+  ) {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
@@ -195,7 +285,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         child: Icon(icon, color: const Color(0xFFF27121), size: 20),
       ),
-      title: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF1A1C29))),
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF1A1C29),
+        ),
+      ),
       trailing: Switch(
         value: value,
         onChanged: onChanged,

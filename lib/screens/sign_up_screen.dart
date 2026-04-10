@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:test_app_3/models/user.dart';
 import 'package:test_app_3/repository/firebase_api.dart';
 import 'package:test_app_3/utils/firebase_errors.dart';
 import 'package:test_app_3/utils/messenger_utils.dart';
@@ -21,6 +23,142 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _confirmPasswordTextEditingController = TextEditingController();
 
   final _firebaseApi = FirebaseApi();
+
+  Widget _buildLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF1A1C29),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required String hint,
+    required IconData icon,
+    required TextEditingController controller,
+  }) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hint,
+        prefixIcon: Icon(icon, size: 20),
+        filled: true,
+        fillColor: const Color(0xFFF8F9FA),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPasswordField({
+    required String hint,
+    required bool obscure,
+    required VoidCallback onToggle,
+    IconData icon = Icons.lock_outline,
+    required TextEditingController controller,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: obscure,
+      decoration: InputDecoration(
+        hintText: hint,
+        prefixIcon: Icon(icon, size: 20),
+        suffixIcon: IconButton(
+          icon: Icon(
+            obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+            color: Colors.blueGrey,
+            size: 20,
+          ),
+          onPressed: onToggle,
+        ),
+        filled: true,
+        fillColor: const Color(0xFFF8F9FA),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+
+  Widget _genderChip(String label) {
+    bool isSelected = _selectedGender == label;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedGender = label),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isSelected ? const Color(0xFFF27121) : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected
+                  ? const Color(0xFFF27121)
+                  : const Color(0xFFE0E0E0),
+            ),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.blueGrey,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _singUp() async {
+    String name = _nameTextEditingController.text.trim();
+    String email = _emailTextEditingController.text.trim();
+    String password = _passwordTextEditingController.text.trim();
+    String confirmPassword = _confirmPasswordTextEditingController.text.trim();
+    String gender = _selectedGender;
+    String birthday = _dobController.text.trim();
+    String phone = _phoneTextEditingController.text.trim();
+
+    if (password != confirmPassword) {
+      MessengerUtils.showMsg(context, "Las contraseñas no coinciden");
+      return;
+    }
+    if (name.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty ||
+        gender.isEmpty ||
+        birthday.isEmpty) {
+      MessengerUtils.showMsg(context, "Todos los campos son obligatorios");
+      return;
+    }
+    try {
+      final respuesta = await _firebaseApi.signUp(email, password);
+      if (respuesta != null) {
+        await _createUserInDB(User(name, email, gender, phone, birthday, ''));
+        Navigator.pop(context); //vuelve a singin
+      }
+    } catch (e) {
+      MessengerUtils.showMsg(context, FirebaseErrors.mapMessage(e.toString()));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -249,124 +387,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget _buildLabel(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF1A1C29),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required String hint,
-    required IconData icon,
-    required TextEditingController controller,
-  }) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hint,
-        prefixIcon: Icon(icon, size: 20),
-        filled: true,
-        fillColor: const Color(0xFFF8F9FA),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 16,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPasswordField({
-    required String hint,
-    required bool obscure,
-    required VoidCallback onToggle,
-    IconData icon = Icons.lock_outline,
-    required TextEditingController controller,
-  }) {
-    return TextField(
-      controller: controller,
-      obscureText: obscure,
-      decoration: InputDecoration(
-        hintText: hint,
-        prefixIcon: Icon(icon, size: 20),
-        suffixIcon: IconButton(
-          icon: Icon(
-            obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-            color: Colors.blueGrey,
-            size: 20,
-          ),
-          onPressed: onToggle,
-        ),
-        filled: true,
-        fillColor: const Color(0xFFF8F9FA),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 16,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
-
-  Widget _genderChip(String label) {
-    bool isSelected = _selectedGender == label;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => setState(() => _selectedGender = label),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFF27121) : Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: isSelected
-                  ? const Color(0xFFF27121)
-                  : const Color(0xFFE0E0E0),
-            ),
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? Colors.white : Colors.blueGrey,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                fontSize: 12,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _singUp() async {
-    String email = _emailTextEditingController.text.trim();
-    String password = _passwordTextEditingController.text.trim();
-    String confirmPassword = _confirmPasswordTextEditingController.text.trim();
-
-    if (password != confirmPassword) {
-      print("Las contraseñas no coinciden");
-      return;
-    }
-    // if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+  Future<void> _createUserInDB(User? user) async {
     try {
-      final respuesta = await _firebaseApi.signUp(email, password);
-      if (respuesta != null) {
-        Navigator.pop(context); //vuelve a singin
-      }
+      await _firebaseApi.createUser(user);
     } catch (e) {
       MessengerUtils.showMsg(context, FirebaseErrors.mapMessage(e.toString()));
     }

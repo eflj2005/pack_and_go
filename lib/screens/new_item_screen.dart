@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:test_app_3/models/item.dart';
 import 'package:test_app_3/repository/firebase_api.dart';
 import 'package:test_app_3/utils/firebase_errors.dart';
@@ -18,6 +22,9 @@ class _NewItemScreenState extends State<NewItemScreen> {
 
   final _firbaseApi = FirebaseApi();
 
+  File? _imageFile;
+  final ImagePicker _imagePicker = ImagePicker();
+
   String _selectedUnit = 'unidades';
   String _selectedPriority = 'Media';
 
@@ -29,175 +36,55 @@ class _NewItemScreenState extends State<NewItemScreen> {
     'cajas',
     'otros',
   ];
+
   final List<String> _priorities = ['Baja', 'Media', 'Alta'];
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF1A1C29)),
-          onPressed: () => Navigator.pop(context),
+  Future<void> _takePhoto(ImageSource camera) async {
+    try {
+      final XFile? photo = await _imagePicker.pickImage(
+        source: camera,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85, //0-100
+      );
+
+      if (photo == null) return;
+
+      setState(() {
+        _imageFile = File(photo.path);
+      });
+    } on PlatformException catch (e) {
+      MessengerUtils.showMsg(context, 'Error al tomar la foto: $e');
+    } catch (e) {
+      MessengerUtils.showMsg(context, 'Error al tomar la foto: $e');
+    }
+  }
+
+  Future<void> _saveItem() async {
+    String name = _nameController.text.trim();
+    String quantity = _quantityController.text.trim();
+    String description = _descriptionController.text.trim();
+
+    try {
+      await _firbaseApi.createItem(
+        Item(
+          '',
+          name,
+          quantity,
+          _selectedUnit,
+          _selectedPriority,
+          description,
+          '',
+          false,
         ),
-        title: const Text(
-          'Nuevo Ítem',
-          style: TextStyle(
-            color: Color(0xFF1A1C29),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildLabel('Nombre del ítem'),
-            _buildTextField(
-              controller: _nameController,
-              hint: 'Ej. Protector solar',
-            ),
-            const SizedBox(height: 24),
-
-            Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildLabel('Cantidad'),
-                      _buildTextField(
-                        controller: _quantityController,
-                        hint: '1',
-                        keyboardType: TextInputType.number,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [_buildLabel('Unidad'), _buildDropdownField()],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            // Unit Quick Select Chips
-            Wrap(
-              spacing: 8,
-              children: _units
-                  .take(3)
-                  .map((unit) => _buildChip(unit, isUnit: true))
-                  .toList(),
-            ),
-            const SizedBox(height: 24),
-
-            _buildLabel('Prioridad'),
-            Row(
-              children: _priorities
-                  .map(
-                    (priority) => Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        child: _buildChip(priority, isUnit: false),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-            const SizedBox(height: 24),
-
-            _buildLabel('Descripción'),
-            _buildTextField(
-              controller: _descriptionController,
-              hint: 'Agregar detalles adicionales...',
-              maxLines: 4,
-            ),
-            const SizedBox(height: 24),
-
-            _buildLabel('Foto del ítem'),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildImagePickerCard(
-                    icon: Icons.camera_alt_outlined,
-                    label: 'Tomar Foto',
-                    onTap: () {
-                      // Lógica para cámara
-                    },
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildImagePickerCard(
-                    icon: Icons.image_outlined,
-                    label: 'Galería',
-                    onTap: () {
-                      // Lógica para galería
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            // Placeholder for selected image
-            Container(
-              width: double.infinity,
-              height: 150,
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8F9FA),
-                borderRadius: BorderRadius.circular(20),
-                image: const DecorationImage(
-                  image: NetworkImage(
-                    'https://via.placeholder.com/400x150?text=Sin+imagen+seleccionada',
-                  ),
-                  fit: BoxFit.cover,
-                  opacity: 0.5,
-                ),
-              ),
-              child: const Center(
-                child: Text(
-                  'Sin imagen seleccionada',
-                  style: TextStyle(color: Colors.blueGrey),
-                ),
-              ),
-            ),
-            const SizedBox(height: 32),
-
-            // Save Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // Lógica para guardar
-                },
-                icon: const Icon(Icons.save_rounded),
-                label: const Text(
-                  'Guardar Ítem',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFF27121),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
+        _imageFile,
+      );
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      MessengerUtils.showMsg(context, FirebaseErrors.mapMessage(e.toString()));
+    }
   }
 
   Widget _buildLabel(String text) {
@@ -344,29 +231,180 @@ class _NewItemScreenState extends State<NewItemScreen> {
     );
   }
 
-  Future<void> saveItem() async {
-    String name = _nameController.text.trim();
-    String quantity = _quantityController.text.trim();
-    String description = _descriptionController.text.trim();
-
-    try {
-      await _firbaseApi.createItem(
-        Item(
-          '',
-          name,
-          quantity,
-          _selectedUnit,
-          _selectedPriority,
-          description,
-          '',
-          false,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF1A1C29)),
+          onPressed: () => Navigator.pop(context),
         ),
-      );
-      if (mounted) {
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      MessengerUtils.showMsg(context, FirebaseErrors.mapMessage(e.toString()));
-    }
+        title: const Text(
+          'Nuevo Ítem',
+          style: TextStyle(
+            color: Color(0xFF1A1C29),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildLabel('Nombre del ítem'),
+            _buildTextField(
+              controller: _nameController,
+              hint: 'Ej. Protector solar',
+            ),
+            const SizedBox(height: 24),
+
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildLabel('Cantidad'),
+                      _buildTextField(
+                        controller: _quantityController,
+                        hint: '1',
+                        keyboardType: TextInputType.number,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [_buildLabel('Unidad'), _buildDropdownField()],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            // Unit Quick Select Chips
+            Wrap(
+              spacing: 8,
+              children: _units
+                  .take(3)
+                  .map((unit) => _buildChip(unit, isUnit: true))
+                  .toList(),
+            ),
+            const SizedBox(height: 24),
+
+            _buildLabel('Prioridad'),
+            Row(
+              children: _priorities
+                  .map(
+                    (priority) => Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: _buildChip(priority, isUnit: false),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+            const SizedBox(height: 24),
+
+            _buildLabel('Descripción'),
+            _buildTextField(
+              controller: _descriptionController,
+              hint: 'Agregar detalles adicionales...',
+              maxLines: 4,
+            ),
+            const SizedBox(height: 24),
+
+            _buildLabel('Foto del ítem'),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildImagePickerCard(
+                    icon: Icons.camera_alt_outlined,
+                    label: 'Tomar Foto',
+                    onTap: () {
+                      _takePhoto(ImageSource.camera);
+                    },
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildImagePickerCard(
+                    icon: Icons.image_outlined,
+                    label: 'Galería',
+                    onTap: () {
+                      _takePhoto(ImageSource.gallery);
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            // Placeholder for selected image
+            Container(
+              width: double.infinity,
+              height: 150,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8F9FA),
+                borderRadius: BorderRadius.circular(20),
+                image: _imageFile != null
+                    ? DecorationImage(
+                        image: FileImage(_imageFile!),
+                        fit: BoxFit.cover,
+                      )
+                    : const DecorationImage(
+                        image: NetworkImage(
+                          'https://via.placeholder.com/400x150?text=Sin+imagen+seleccionada',
+                        ),
+                        fit: BoxFit.cover,
+                        opacity: 0.5,
+                      ),
+              ),
+              child: _imageFile == null
+                  ? const Center(
+                      child: Text(
+                        'Sin imagen seleccionada',
+                        style: TextStyle(color: Colors.blueGrey),
+                      ),
+                    )
+                  : null,
+            ),
+            const SizedBox(height: 32),
+
+            // Save Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  // Lógica para guardar
+                  _saveItem();
+                },
+                icon: const Icon(Icons.save_rounded),
+                label: const Text(
+                  'Guardar Ítem',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFF27121),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
   }
 }

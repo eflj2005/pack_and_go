@@ -6,7 +6,7 @@ class Item {
   var _priority;
   var _description;
   var _image;
-  var isCompleted;
+  var _isCompleted;
 
   Item(
     this._id,
@@ -16,7 +16,7 @@ class Item {
     this._priority,
     this._description,
     this._image,
-    this.isCompleted,
+    this._isCompleted,
   );
 
   get id => _id;
@@ -26,7 +26,7 @@ class Item {
   get priority => _priority;
   get description => _description;
   get image => _image;
-  get isCompleted => isCompleted;
+  get isCompleted => _isCompleted;
 
   set id(value) => _id = value;
   set name(value) => _name = value;
@@ -35,7 +35,7 @@ class Item {
   set priority(value) => _priority = value;
   set description(value) => _description = value;
   set image(value) => _image = value;
-  set isCompleted(value) => isCompleted = value;
+  set isCompleted(value) => _isCompleted = value;
 
   Item.fromJson(Map<String, dynamic> json)
     : _id = json['id'],
@@ -45,7 +45,7 @@ class Item {
       _priority = json['priority'],
       _description = json['description'],
       _image = json['image'],
-      isCompleted = json['isCompleted'];
+      _isCompleted = json['isCompleted'];
 
   Map<String, dynamic> toJson() => {
     'id': _id,
@@ -55,6 +55,6 @@ class Item {
     'priority': _priority,
     'description': _description,
     'image': _image,
-    'isCompleted': isCompleted,
+    'isCompleted': _isCompleted,
   };
 }
