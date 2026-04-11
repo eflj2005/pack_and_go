@@ -2,10 +2,43 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:test_app_3/models/item.dart';
+import 'package:test_app_3/models/usuario.dart';
 
 class FirebaseApi {
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+
+  Future<Object?> signInWithGoogle() async {
+    try {
+      await _googleSignIn.signOut();
+
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        return null;
+      }
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
+      return userCredential.user?.uid;
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseException: ${e.code}');
+      throw e.code;
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.code}');
+      throw e.code;
+    }
+  }
+
   Future<String?> signUp(String email, String password) async {
     try {
       final credenciales = await FirebaseAuth.instance
@@ -24,6 +57,15 @@ class FirebaseApi {
     try {
       final credenciales = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+
+      String? token = await FirebaseMessaging.instance.getToken();
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(credenciales.user?.uid)
+          .set({
+            'fcmToken': token,
+            'updateAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
       return credenciales.user?.uid;
     } on FirebaseAuthException catch (e) {
       print('FirebaseException: ${e.code}');
@@ -55,7 +97,7 @@ class FirebaseApi {
   }
 
   Future<bool> validateSession() async {
-    return await FirebaseAuth.instance.currentUser == null;
+    return FirebaseAuth.instance.currentUser == null;
   }
 
   Future<void> createItem(Item item, File? imageFile) async {
@@ -176,7 +218,7 @@ class FirebaseApi {
     }
   }
 
-  Future<void> createUser(User? user) async {
+  Future<void> createUser(Usuario? user) async {
     try {
       await FirebaseFirestore.instance
           .collection('users')

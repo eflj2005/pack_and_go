@@ -1,6 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:test_app_3/models/user.dart';
+import 'package:test_app_3/models/usuario.dart';
 import 'package:test_app_3/repository/firebase_api.dart';
 import 'package:test_app_3/utils/firebase_errors.dart';
 import 'package:test_app_3/utils/messenger_utils.dart';
@@ -21,6 +20,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _emailTextEditingController = TextEditingController();
   final _passwordTextEditingController = TextEditingController();
   final _confirmPasswordTextEditingController = TextEditingController();
+  final _phoneTextEditingController = TextEditingController();
 
   final _firebaseApi = FirebaseApi();
 
@@ -152,7 +152,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     try {
       final respuesta = await _firebaseApi.signUp(email, password);
       if (respuesta != null) {
-        await _createUserInDB(User(name, email, gender, phone, birthday, ''));
+        await _createUserInDB(
+          Usuario(respuesta, name, email, phone, gender, birthday, ''),
+        );
         Navigator.pop(context); //vuelve a singin
       }
     } catch (e) {
@@ -387,9 +389,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Future<void> _createUserInDB(User? user) async {
+  Future<void> _createUserInDB(Usuario? user) async {
     try {
       await _firebaseApi.createUser(user);
+      if (mounted) Navigator.pop(context);
     } catch (e) {
       MessengerUtils.showMsg(context, FirebaseErrors.mapMessage(e.toString()));
     }

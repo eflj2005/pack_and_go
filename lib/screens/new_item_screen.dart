@@ -39,10 +39,10 @@ class _NewItemScreenState extends State<NewItemScreen> {
 
   final List<String> _priorities = ['Baja', 'Media', 'Alta'];
 
-  Future<void> _takePhoto(ImageSource camera) async {
+  Future<void> _takePhoto(ImageSource source) async {
     try {
       final XFile? photo = await _imagePicker.pickImage(
-        source: camera,
+        source: source,
         maxWidth: 1920,
         maxHeight: 1080,
         imageQuality: 85, //0-100

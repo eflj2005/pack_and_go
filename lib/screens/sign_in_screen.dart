@@ -19,6 +19,46 @@ class _SignInScreenState extends State<SignInScreen> {
   final _passwordTextEditingController = TextEditingController();
   final _firebaseApi = FirebaseApi();
 
+  Future<void> _signIn() async {
+    String email = _emailTextEditingController.text.trim();
+    String password = _passwordTextEditingController.text.trim();
+    try {
+      final result = await FirebaseApi().signIn(email, password);
+      if (result != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
+    } catch (e) {
+      MessengerUtils.showMsg(context, FirebaseErrors.mapMessage(e.toString()));
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    try {
+      final result = await _firebaseApi.signInWithGoogle();
+      if (result != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
+    } catch (e) {
+      MessengerUtils.showMsg(context, FirebaseErrors.mapMessage(e.toString()));
+    }
+  }
+
+  Widget _footerLink(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Text(
+        text,
+        style: const TextStyle(color: Colors.blueGrey, fontSize: 11),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -230,26 +270,43 @@ class _SignInScreenState extends State<SignInScreen> {
                     // Google Button
                     SizedBox(
                       width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.g_mobiledata,
-                          size: 30,
-                          color: Colors.blue,
-                        ), // Simplified for brevity
-                        label: const Text(
-                          'Continuar con Google',
-                          style: TextStyle(
-                            color: Color(0xFF1A1C29),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                      child: OutlinedButton(
+                        onPressed: () {
+                          _signInWithGoogle();
+                        },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
                           ),
                           side: const BorderSide(color: Color(0xFFE0E0E0)),
+                          backgroundColor: Colors.white,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Usamos un icono de material como respaldo seguro o una URL de imagen estática
+                            Image.network(
+                              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_"G"_logo.svg/24px-Google_"G"_logo.svg.png',
+                              height: 24,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(
+                                  Icons.account_circle,
+                                  color: Colors.blue,
+                                  size: 24,
+                                );
+                              },
+                            ),
+                            const SizedBox(width: 12),
+                            const Text(
+                              'Iniciar sesión con Google',
+                              style: TextStyle(
+                                color: Color(0xFF1A1C29),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -297,31 +354,5 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
       ),
     );
-  }
-
-  Widget _footerLink(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Text(
-        text,
-        style: const TextStyle(color: Colors.blueGrey, fontSize: 11),
-      ),
-    );
-  }
-
-  Future<void> _signIn() async {
-    String email = _emailTextEditingController.text.trim();
-    String password = _passwordTextEditingController.text.trim();
-    try {
-      final result = await FirebaseApi().signIn(email, password);
-      if (result != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
-      }
-    } catch (e) {
-      MessengerUtils.showMsg(context, FirebaseErrors.mapMessage(e.toString()));
-    }
   }
 }

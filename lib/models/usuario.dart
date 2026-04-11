@@ -1,4 +1,4 @@
-class User {
+class Usuario {
   var _uid;
   var _name;
   var _email;
@@ -7,7 +7,7 @@ class User {
   var _birthday;
   var _image;
 
-  User({
+  Usuario(
     this._uid,
     this._name,
     this._email,
@@ -15,9 +15,25 @@ class User {
     this._gender,
     this._birthday,
     this._image,
-  });
+  );
 
-  User.fromJson(Map<String, dynamic> json)
+  get uid => _uid;
+  get name => _name;
+  get email => _email;
+  get phone => _phone;
+  get gender => _gender;
+  get birthday => _birthday;
+  get image => _image;
+
+  set uid(value) => _uid = value;
+  set name(value) => _name = value;
+  set email(value) => _email = value;
+  set phone(value) => _phone = value;
+  set gender(value) => _gender = value;
+  set birthday(value) => _birthday = value;
+  set image(value) => _image = value;
+
+  Usuario.fromJson(Map<String, dynamic> json)
     : _uid = json['uid'],
       _name = json['name'],
       _email = json['email'],

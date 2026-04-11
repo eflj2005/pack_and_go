@@ -328,7 +328,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
         'isCompleted': widget.item['isCompleted'],
       };
 
-      await _firebaseApi.updateItem(widget.item.id, data);
+      await _firebaseApi.updateItem(widget.item.id, data, null);
     } catch (e) {
       if (mounted) {
         MessengerUtils.showMsg(

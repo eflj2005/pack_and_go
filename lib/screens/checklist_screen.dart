@@ -19,47 +19,47 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
   final _firebaseApi = FirebaseApi();
 
   // final List<Map<String, dynamic>> _mockItems = [
-    {
-      'id': '1',
-      'name': 'Cámara DSLR',
-      'quantity': '1 UD',
-      'priority': 'ALTA',
-      'description': 'No olvidar el cargador y la tarjeta SD de repuesto.',
-      'image':
-          'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=200&auto=format&fit=crop',
-      'isCompleted': false,
-    },
-    {
-      'id': '2',
-      'name': 'Pasaporte',
-      'quantity': '1 UD',
-      'priority': 'ALTA',
-      'description': 'Verificar fecha de vencimiento.',
-      'image':
-          'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=200&auto=format&fit=crop',
-      'isCompleted': true,
-    },
-    {
-      'id': '3',
-      'name': 'Botiquín',
-      'quantity': '2 UNIDADES',
-      'priority': 'MEDIA',
-      'description': 'Incluir paracetamol y vendas elásticas.',
-      'image':
-          'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=200&auto=format&fit=crop',
-      'isCompleted': false,
-    },
-    {
-      'id': '4',
-      'name': 'Auriculares',
-      'quantity': '1 UD',
-      'priority': 'BAJA',
-      'description': 'Para el vuelo largo, cargar antes de salir.',
-      'image':
-          'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=200&auto=format&fit=crop',
-      'isCompleted': false,
-    },
-  ];
+  //   {
+  //     'id': '1',
+  //     'name': 'Cámara DSLR',
+  //     'quantity': '1 UD',
+  //     'priority': 'ALTA',
+  //     'description': 'No olvidar el cargador y la tarjeta SD de repuesto.',
+  //     'image':
+  //         'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=200&auto=format&fit=crop',
+  //     'isCompleted': false,
+  //   },
+  //   {
+  //     'id': '2',
+  //     'name': 'Pasaporte',
+  //     'quantity': '1 UD',
+  //     'priority': 'ALTA',
+  //     'description': 'Verificar fecha de vencimiento.',
+  //     'image':
+  //         'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=200&auto=format&fit=crop',
+  //     'isCompleted': true,
+  //   },
+  //   {
+  //     'id': '3',
+  //     'name': 'Botiquín',
+  //     'quantity': '2 UNIDADES',
+  //     'priority': 'MEDIA',
+  //     'description': 'Incluir paracetamol y vendas elásticas.',
+  //     'image':
+  //         'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=200&auto=format&fit=crop',
+  //     'isCompleted': false,
+  //   },
+  //   {
+  //     'id': '4',
+  //     'name': 'Auriculares',
+  //     'quantity': '1 UD',
+  //     'priority': 'BAJA',
+  //     'description': 'Para el vuelo largo, cargar antes de salir.',
+  //     'image':
+  //         'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=200&auto=format&fit=crop',
+  //     'isCompleted': false,
+  //   },
+  // ];
 
   void _updateItemCompletion(String id, bool isCompleted) async {
     try {
@@ -397,98 +397,97 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
     );
   }
 
- void _showDeleteConfirmationDialog(QueryDocumentSnapshot<Object?> item) { 
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-          elevation: 10,
-          backgroundColor: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Icono superior
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF0F0),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.delete_rounded,
-                    color: Colors.red,
-                    size: 32,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  '¿Eliminar ítem?',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1C29),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: Colors.blueGrey,
-                      height: 1.5,
-                    ),
-                    children: [
-                      const TextSpan(
-                        text: '¿Estás seguro de que deseas eliminar ',
-                      ),
-                      TextSpan(
-                        text: '"${item['name']}"',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1A1C29),
-                        ),
-                      ),
-                      const TextSpan(
-                        text: ' de tu lista? Esta acción no se puede deshacer.',
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 32),
+  // void _showDeleteConfirmationDialog(QueryDocumentSnapshot<Object?> item) {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: true,
+  //     builder: (BuildContext context) {
+  //       return Dialog(
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(24),
+  //         ),
+  //         elevation: 10,
+  //         backgroundColor: Colors.white,
+  //         child: Padding(
+  //           padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               // Icono superior
+  //               Container(
+  //                 padding: const EdgeInsets.all(16),
+  //                 decoration: BoxDecoration(
+  //                   color: const Color(0xFFFFF0F0),
+  //                   shape: BoxShape.circle,
+  //                 ),
+  //                 child: const Icon(
+  //                   Icons.delete_rounded,
+  //                   color: Colors.red,
+  //                   size: 32,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 24),
+  //               const Text(
+  //                 '¿Eliminar ítem?',
+  //                 style: TextStyle(
+  //                   fontSize: 22,
+  //                   fontWeight: FontWeight.bold,
+  //                   color: Color(0xFF1A1C29),
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 12),
+  //               RichText(
+  //                 textAlign: TextAlign.center,
+  //                 text: TextSpan(
+  //                   style: const TextStyle(
+  //                     fontSize: 15,
+  //                     color: Colors.blueGrey,
+  //                     height: 1.5,
+  //                   ),
+  //                   children: [
+  //                     const TextSpan(
+  //                       text: '¿Estás seguro de que deseas eliminar ',
+  //                     ),
+  //                     TextSpan(
+  //                       text: '"${item['name']}"',
+  //                       style: const TextStyle(
+  //                         fontWeight: FontWeight.bold,
+  //                         color: Color(0xFF1A1C29),
+  //                       ),
+  //                     ),
+  //                     const TextSpan(
+  //                       text: ' de tu lista? Esta acción no se puede deshacer.',
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 32),
 
-                // Botón Confirmar Eliminar
-                _buildDialogButton(
-                  label: 'Eliminar',
-                  backgroundColor: const Color(0xFFF27121),
-                  textColor: Colors.white,
-                  onTap: () {
-                    // Lógica para eliminar el item
-                    deleteItem(item.id);
-                    // Navigator.pop(context);
-                  },
-                ),
-                const SizedBox(height: 12),
+  //               // Botón Confirmar Eliminar
+  //               _buildDialogButton(
+  //                 label: 'Eliminar',
+  //                 backgroundColor: const Color(0xFFF27121),
+  //                 textColor: Colors.white,
+  //                 onTap: () {
+  //                   // Lógica para eliminar el item
+  //                   deleteItem(item.id);
+  //                   // Navigator.pop(context);
+  //                 },
+  //               ),
+  //               const SizedBox(height: 12),
 
-                // Botón Cancelar
-                _buildDialogButton(
-                  label: 'Cancelar',
-                  backgroundColor: const Color(0xFFF8F9FA),
-                  textColor: const Color(0xFF1A1C29),
-                  onTap: () => Navigator.pop(context),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
+  //               // Botón Cancelar
+  //               _buildDialogButton(
+  //                 label: 'Cancelar',
+  //                 backgroundColor: const Color(0xFFF8F9FA),
+  //                 textColor: const Color(0xFF1A1C29),
+  //                 onTap: () => Navigator.pop(context),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }
