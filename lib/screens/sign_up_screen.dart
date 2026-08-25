@@ -178,7 +178,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   borderRadius: BorderRadius.circular(32),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -339,7 +339,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           elevation: 8,
-                          shadowColor: const Color(0xFFF27121).withOpacity(0.3),
+                          shadowColor: const Color(
+                            0xFFF27121,
+                          ).withValues(alpha: 0.3),
                         ),
                         child: const Text(
                           'Registrar',

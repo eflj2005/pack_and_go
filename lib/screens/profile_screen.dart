@@ -37,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           border: Border.all(color: Colors.white, width: 4),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 10,
                               offset: const Offset(0, 5),
                             ),
@@ -213,7 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -296,12 +296,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: const Color(0xFFF27121),
+        activeThumbColor: const Color(0xFFF27121),
       ),
     );
   }
 
   Widget _buildDivider() {
-    return Divider(height: 1, indent: 70, color: Colors.grey.withOpacity(0.1));
+    return Divider(
+      height: 1,
+      indent: 70,
+      color: Colors.grey.withValues(alpha: 0.1),
+    );
   }
 }

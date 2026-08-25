@@ -178,7 +178,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
             side: BorderSide(
               color: isCompleted
                   ? Colors.transparent
-                  : Colors.grey.withOpacity(0.1),
+                  : Colors.grey.withValues(alpha: 0.1),
             ),
           ),
           elevation: isCompleted ? 0 : 2,
@@ -288,7 +288,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                       border: Border.all(
                         color: isCompleted
                             ? const Color(0xFFF27121)
-                            : const Color(0xFFF27121).withOpacity(0.3),
+                            : const Color(0xFFF27121).withValues(alpha: 0.3),
                         width: 2,
                       ),
                     ),

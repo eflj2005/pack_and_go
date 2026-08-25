@@ -23,11 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const ProfileScreen(),
   ];
 
-  final List<String> _titles = [
-    'Mi Equipaje',
-    'Colaboradores',
-    'Mi Perfil',
-  ];
+  final List<String> _titles = ['Mi Equipaje', 'Colaboradores', 'Mi Perfil'];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -58,9 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _firebaseApi.signOut();
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const SignInScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => const SignInScreen()),
               );
             },
           ),
@@ -68,24 +62,28 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: _screens[_selectedIndex],
-      floatingActionButton: _selectedIndex == 0 
-        ? FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const NewItemScreen()),
-              );
-            },
-            backgroundColor: const Color(0xFFF27121),
-            child: const Icon(Icons.add, color: Colors.white, size: 30),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          )
-        : null,
+      floatingActionButton: _selectedIndex == 0
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const NewItemScreen(),
+                  ),
+                );
+              },
+              backgroundColor: const Color(0xFFF27121),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: const Icon(Icons.add, color: Colors.white, size: 30),
+            )
+          : null,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, -5),
             ),
@@ -97,8 +95,14 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Colors.white,
           selectedItemColor: const Color(0xFFF27121),
           unselectedItemColor: Colors.blueGrey,
-          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
           type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(

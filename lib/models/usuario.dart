@@ -17,13 +17,13 @@ class Usuario {
     this._image,
   );
 
-  get uid => _uid;
-  get name => _name;
-  get email => _email;
-  get phone => _phone;
-  get gender => _gender;
-  get birthday => _birthday;
-  get image => _image;
+  dynamic get uid => _uid;
+  dynamic get name => _name;
+  dynamic get email => _email;
+  dynamic get phone => _phone;
+  dynamic get gender => _gender;
+  dynamic get birthday => _birthday;
+  dynamic get image => _image;
 
   set uid(value) => _uid = value;
   set name(value) => _name = value;

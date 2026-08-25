@@ -212,7 +212,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   elevation: 8,
-                  shadowColor: const Color(0xFFF27121).withOpacity(0.3),
+                  shadowColor: const Color(0xFFF27121).withValues(alpha: 0.3),
                 ),
                 child: const Text(
                   'Guardar Cambios',

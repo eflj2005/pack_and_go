@@ -41,7 +41,9 @@ class _RecoveryPasswordScreenState extends State<RecoveryPasswordScreen> {
                         borderRadius: BorderRadius.circular(25),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFF27121).withOpacity(0.3),
+                            color: const Color(
+                              0xFFF27121,
+                            ).withValues(alpha: 0.3),
                             blurRadius: 15,
                             offset: const Offset(0, 8),
                           ),
@@ -80,7 +82,7 @@ class _RecoveryPasswordScreenState extends State<RecoveryPasswordScreen> {
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -178,7 +180,7 @@ class _RecoveryPasswordScreenState extends State<RecoveryPasswordScreen> {
                             elevation: 5,
                             shadowColor: const Color(
                               0xFFF27121,
-                            ).withOpacity(0.4),
+                            ).withValues(alpha: 0.4),
                           ),
                           child: const Text(
                             'Recuperar contraseña',

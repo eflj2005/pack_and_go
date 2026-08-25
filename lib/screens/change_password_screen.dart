@@ -29,7 +29,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ),
         title: const Text(
           'Cambiar Contraseña',
-          style: TextStyle(color: Color(0xFF1A1C29), fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Color(0xFF1A1C29),
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
       ),
@@ -57,7 +60,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             const Text(
               'Tu nueva contraseña debe tener al menos 8 caracteres e incluir una combinación de letras y números.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.blueGrey, fontSize: 14, height: 1.5),
+              style: TextStyle(
+                color: Colors.blueGrey,
+                fontSize: 14,
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 40),
 
@@ -67,7 +74,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               controller: _currentPasswordController,
               hint: 'Introduce tu contraseña actual',
               obscure: _obscureCurrent,
-              onToggle: () => setState(() => _obscureCurrent = !_obscureCurrent),
+              onToggle: () =>
+                  setState(() => _obscureCurrent = !_obscureCurrent),
               showSuffix: false,
             ),
             const SizedBox(height: 24),
@@ -86,7 +94,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               controller: _confirmPasswordController,
               hint: 'Repite tu nueva contraseña',
               obscure: _obscureConfirm,
-              onToggle: () => setState(() => _obscureConfirm = !_obscureConfirm),
+              onToggle: () =>
+                  setState(() => _obscureConfirm = !_obscureConfirm),
             ),
             const SizedBox(height: 32),
 
@@ -100,12 +109,20 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.security_rounded, color: Color(0xFFF27121), size: 20),
+                  const Icon(
+                    Icons.security_rounded,
+                    color: Color(0xFFF27121),
+                    size: 20,
+                  ),
                   const SizedBox(width: 12),
                   const Expanded(
                     child: Text(
                       'Al cambiar tu contraseña, se cerrarán todas las sesiones activas en otros dispositivos para mantener la seguridad de tu cuenta de Pack & Go.',
-                      style: TextStyle(color: Colors.blueGrey, fontSize: 13, height: 1.4),
+                      style: TextStyle(
+                        color: Colors.blueGrey,
+                        fontSize: 13,
+                        height: 1.4,
+                      ),
                     ),
                   ),
                 ],
@@ -121,15 +138,20 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   // Lógica para actualizar contraseña
                   Navigator.pop(context);
                 },
-                icon: const Text('Actualizar Contraseña', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                icon: const Text(
+                  'Actualizar Contraseña',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 label: const Icon(Icons.key_rounded, size: 20),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFF27121),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 18),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
                   elevation: 8,
-                  shadowColor: const Color(0xFFF27121).withOpacity(0.3),
+                  shadowColor: const Color(0xFFF27121).withValues(alpha: 0.3),
                 ),
               ),
             ),
@@ -147,7 +169,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         padding: const EdgeInsets.only(bottom: 8.0),
         child: Text(
           text,
-          style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1A1C29), fontSize: 16),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1A1C29),
+            fontSize: 16,
+          ),
         ),
       ),
     );
@@ -168,17 +194,22 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
         filled: true,
         fillColor: Colors.white,
-        suffixIcon: showSuffix 
-          ? IconButton(
-              icon: Icon(
-                obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                color: Colors.blueGrey,
-                size: 20,
-              ),
-              onPressed: onToggle,
-            )
-          : null,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        suffixIcon: showSuffix
+            ? IconButton(
+                icon: Icon(
+                  obscure
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  color: Colors.blueGrey,
+                  size: 20,
+                ),
+                onPressed: onToggle,
+              )
+            : null,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
           borderSide: const BorderSide(color: Color(0xFFE0E0E0)),

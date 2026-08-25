@@ -19,14 +19,14 @@ class Item {
     this._isCompleted,
   );
 
-  get id => _id;
-  get name => _name;
-  get quantity => _quantity;
-  get unit => _unit;
-  get priority => _priority;
-  get description => _description;
-  get image => _image;
-  get isCompleted => _isCompleted;
+  dynamic get id => _id;
+  dynamic get name => _name;
+  dynamic get quantity => _quantity;
+  dynamic get unit => _unit;
+  dynamic get priority => _priority;
+  dynamic get description => _description;
+  dynamic get image => _image;
+  dynamic get isCompleted => _isCompleted;
 
   set id(value) => _id = value;
   set name(value) => _name = value;

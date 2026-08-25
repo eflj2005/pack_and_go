@@ -27,7 +27,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
         title: const Text(
           'Editar Perfil',
-          style: TextStyle(color: Color(0xFF1A1C29), fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Color(0xFF1A1C29),
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
       ),
@@ -49,13 +52,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           border: Border.all(color: Colors.white, width: 4),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 10,
                               offset: const Offset(0, 5),
                             ),
                           ],
                           image: const DecorationImage(
-                            image: NetworkImage('https://img.freepik.com/vector-premium/avatar-perfil-hombre-estilo-dibujos-animados-vector-premium_202271-4628.jpg'),
+                            image: NetworkImage(
+                              'https://img.freepik.com/vector-premium/avatar-perfil-hombre-estilo-dibujos-animados-vector-premium_202271-4628.jpg',
+                            ),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -69,7 +74,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             color: Color(0xFFF27121),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.camera_alt, color: Colors.white, size: 18),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                         ),
                       ),
                     ],
@@ -77,7 +86,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   const SizedBox(height: 12),
                   const Text(
                     'John Doe',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1A1C29)),
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A1C29),
+                    ),
                   ),
                   const Text(
                     'Viajero Pack & Go',
@@ -90,10 +103,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       backgroundColor: const Color(0xFFFFF5F0),
                       foregroundColor: const Color(0xFFF27121),
                       elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 10,
+                      ),
                     ),
-                    child: const Text('Cambiar foto', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text(
+                      'Cambiar foto',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               ),
@@ -111,11 +132,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
             _buildLabel('Correo Electrónico'),
             _buildTextField(
-              controller: TextEditingController(text: _firebaseApi.currentUserEmail),
+              controller: TextEditingController(
+                text: _firebaseApi.currentUserEmail,
+              ),
               hint: 'tu@email.com',
               icon: Icons.email_outlined,
               enabled: false,
-              suffixIcon: const Icon(Icons.lock_outline, color: Colors.blueGrey, size: 18),
+              suffixIcon: const Icon(
+                Icons.lock_outline,
+                color: Colors.blueGrey,
+                size: 18,
+              ),
             ),
             const SizedBox(height: 20),
 
@@ -132,7 +159,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               controller: _dobController,
               hint: 'MM/DD/YYYY',
               icon: Icons.calendar_today_outlined,
-              suffixIcon: const Icon(Icons.calendar_month, color: Color(0xFF1A1C29)),
+              suffixIcon: const Icon(
+                Icons.calendar_month,
+                color: Color(0xFF1A1C29),
+              ),
               readOnly: true,
               onTap: () async {
                 DateTime? pickedDate = await showDatePicker(
@@ -143,7 +173,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 );
                 if (pickedDate != null) {
                   setState(() {
-                    _dobController.text = "${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.year}";
+                    _dobController.text =
+                        "${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.year}";
                   });
                 }
               },
@@ -161,11 +192,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   backgroundColor: const Color(0xFFF27121),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 18),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   elevation: 8,
-                  shadowColor: const Color(0xFFF27121).withOpacity(0.3),
+                  shadowColor: const Color(0xFFF27121).withValues(alpha: 0.3),
                 ),
-                child: const Text('Actualizar Perfil', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                child: const Text(
+                  'Actualizar Perfil',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -187,7 +223,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         padding: const EdgeInsets.only(bottom: 8.0),
         child: Text(
           text,
-          style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1A1C29), fontSize: 16),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1A1C29),
+            fontSize: 16,
+          ),
         ),
       ),
     );
@@ -213,18 +253,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: enabled ? Colors.white : const Color(0xFFF1F3F5),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: Colors.blueGrey.withOpacity(0.1)),
+          borderSide: BorderSide(color: Colors.blueGrey.withValues(alpha: 0.1)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: Colors.blueGrey.withOpacity(0.1)),
+          borderSide: BorderSide(color: Colors.blueGrey.withValues(alpha: 0.1)),
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: Colors.blueGrey.withOpacity(0.05)),
+          borderSide: BorderSide(
+            color: Colors.blueGrey.withValues(alpha: 0.05),
+          ),
         ),
       ),
     );

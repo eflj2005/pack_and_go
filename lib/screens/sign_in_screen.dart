@@ -75,10 +75,12 @@ class _SignInScreenState extends State<SignInScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(32),
-                  border: Border.all(color: Colors.blueGrey.withOpacity(0.1)),
+                  border: Border.all(
+                    color: Colors.blueGrey.withValues(alpha: 0.1),
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
